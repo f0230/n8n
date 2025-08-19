@@ -1,19 +1,23 @@
 # syntax=docker/dockerfile:1
 ARG N8N_VERSION=1.106.3
-# Fuerza rebuild para evitar cache de una base Alpine
-ARG CACHE_BUST=2025-08-19-01
+# syntax=docker/dockerfile:1
 
-FROM n8nio/n8n:${N8N_VERSION}
+FROM n8nio/n8n:${N8N_VERSION}   # OJO: sin "-alpine"
 
 USER root
 
-# (Opcional) Semillero para nodos privados
-RUN mkdir -p /opt/custom
-# COPY custom /opt/custom  # <-- descomentar solo si EXISTE en el repo
+# Herramientas para compilar módulos nativos (sqlite3)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 make g++ \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /data
+RUN test -f package.json || npm init -y
+RUN npm i --legacy-peer-deps @n8n/n8n-nodes-langchain@latest
+
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 5678
 ENTRYPOINT ["tini","--","/docker-entrypoint.sh"]
+
