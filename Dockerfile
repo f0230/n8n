@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM docker.n8n.io/n8nio/n8n:ai-beta
+FROM n8nio/n8n:latest
 
 COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/n8n-entrypoint.sh
 
