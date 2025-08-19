@@ -1,14 +1,12 @@
 # syntax=docker/dockerfile:1
 FROM docker.n8n.io/n8nio/n8n:ai-beta
 
-# (Opcional) si vas a empaquetar nodos privados tuyos:
-# RUN mkdir -p /opt/custom
-# COPY custom /opt/custom
+# Copiamos el entrypoint con permisos correctos (sin usar chmod en RUN)
+COPY --chmod=0755 docker-entrypoint.sh /usr/local/bin/n8n-entrypoint.sh
 
+# Carpeta de trabajo y datos persistentes (monta tu volumen aquí)
 WORKDIR /data
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+ENV N8N_USER_FOLDER=/data
 
 EXPOSE 5678
-ENTRYPOINT ["tini","--","/docker-entrypoint.sh"]
-
+ENTRYPOINT ["tini","--","/usr/local/bin/n8n-entrypoint.sh"]
