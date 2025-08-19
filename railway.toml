@@ -1,0 +1,5 @@
+[build]
+builder = "Dockerfile"
+dockerfilePath = "Dockerfile"
+[build.args]
+N8N_VERSION = "1.64.0"
